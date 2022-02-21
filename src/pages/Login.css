@@ -1,0 +1,39 @@
+.login{
+    margin-top: 0rem !important;
+}
+
+.margin{
+    margin-top: 5rem !important;
+    margin-bottom: 5rem !important;
+}
+
+.center{
+    text-align: center;
+}
+
+.space{
+    margin-top: 1rem;
+}
+
+.btn-usala{
+    background-color: #EA1F54 !important;
+    color: white !important;
+    letter-spacing: normal;
+    text-transform: capitalize;
+    font-size: 1.2rem;
+}
+
+.link{
+    text-align: center;
+    color: #EA1F54 !important;
+    font-size: small;
+}
+
+.p-1{
+    padding: 0.3rem;
+}
+
+.cardAction{
+    padding: 16px !important;
+    padding-bottom: 0px !important;
+}

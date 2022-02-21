@@ -1,0 +1,7 @@
+.RoomsListView{
+    background-color: aqua;
+}
+
+.RoomsListView>h1{
+    color:blue;
+}

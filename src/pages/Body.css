@@ -1,0 +1,40 @@
+.AppBar{
+    background-color: #051A26 !important;
+}
+
+.Box{
+    padding-left: 0.7rem;
+    background-color: #051A26 !important;
+    height: inherit;
+}
+
+.white{
+    color: white !important;
+}
+
+.list{
+    padding: 0.7rem;
+}
+
+.list-menu{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding-left: 0rem;
+}
+
+.name-user{
+    margin-top: 5rem;
+}
+
+.divider{
+    color: #174356 !important;
+    padding-left: 0rem;
+}
+
+.none{
+    text-decoration: none;
+}
+
+.main{
+    margin-top: 3rem;
+}
