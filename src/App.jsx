@@ -1,19 +1,31 @@
-import {useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Body from './pages/Body';
 import Login from './pages/Login';
-import Bookings from './components/Bookings/BookingsView';
+import { useAuth } from './context/Auth.Context';
 
 function AuthDiv(props) {
-  return props.isAuth ? props.children : null;
+  const { state } = useAuth();
+  return state.isAuthenticated ? props.children : null;
 }
 
 function AuthRoute(props) {
-  return props.isAuth ? props.children : <Navigate to="/" />;
+  const { state } = useAuth();
+  return state.isAuthenticated ? props.children : <Navigate to="/" />;
 }
 
 function App() {
+  const { state: AuthState, dispatch: AuthDispatch } = useAuth();
   const [isAuth, setAuth] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(AuthState.isAuthenticated) {
+      navigate('/panel/reservas');
+    } else {
+      navigate('/');
+    }
+  } , [AuthState]);
 
   return (
     <div className="App">
@@ -21,17 +33,11 @@ function App() {
         <Body />
       </AuthDiv> 
       <Routes>
-        <Route path="/" element={<Login onLogin={()=> setAuth(true)} />} />
-        <Route path="/panel" exact element={<AuthRoute isAuth={isAuth}><Body /> <Route path="/reservas" element={<Bookings />}/></AuthRoute>} />
+        <Route path="/" element={<Login onLogin={()=> {setAuth(true); navigate('/panel')} }  />} />
+        <Route path="/panel" exact element={<AuthRoute isAuth={isAuth}><Body /></AuthRoute>} />
       </Routes>
     </div>
   );
 }
 
 export default App;
-
-//<Login />
-//<NavBar />
-
-/*Comentario para borrar*/
-/*Otro comentario para borrar*/

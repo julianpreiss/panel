@@ -18,7 +18,11 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "./Login.css";
 
+import { Navigate } from 'react-router';
+import { useAuth } from '../context/Auth.Context'
+
 function Login(props) {
+  const { state: AuthState, dispatch: AuthDispatch } = useAuth()
   const [email, setEmail] = useState("");
 
   const [values, setValues] = React.useState({
@@ -67,7 +71,12 @@ function Login(props) {
       })
       .then(function (data) {
         console.log(data);
-        props.onLogin(data.user);
+        /*if(data.status === "ok"){
+          props.onLogin(data.user, <Navigate to="/panel/reservas" />);
+        }*/
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
+        AuthDispatch({ type: 'LOGIN', payload: data.user })
       })
       .catch(function (err) {
         console.log(err);
