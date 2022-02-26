@@ -49,7 +49,7 @@ export default function ClippedDrawer() {
                 <PersonIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/mi-perfil">Usuario</Link>
+                <Link className="white list none" underline="none" to="/panel/mi-perfil">Usuario</Link>
                 </ListItemText>
             </ListItem>
           </List>
@@ -60,7 +60,7 @@ export default function ClippedDrawer() {
                 <EventAvailableIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/reservas">Reservas</Link>
+                <Link className="white list none" underline="none" to="/panel/reservas">Reservas</Link>
                 </ListItemText>
             </ListItem>
             <ListItem button>
@@ -68,7 +68,7 @@ export default function ClippedDrawer() {
                 <LibraryMusicIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/mis-salas">Mis salas</Link>
+                <Link className="white list none" underline="none" to="/panel/mis-salas">Mis salas</Link>
                 </ListItemText>
             </ListItem>
           </List>
@@ -87,10 +87,9 @@ export default function ClippedDrawer() {
       </Drawer>
       <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Routes>
-        <Route path="/mi-perfil" element={<Profile />}/>  
-        <Route path="/reservas" element={<Bookings />}/>
-        <Route path="/mis-salas" element={<RoomsList />}/>
-        <Route path="/" element={<App />}/>
+        <Route path="/panel/mi-perfil" element={<Profile />}/>  
+        <Route path="/panel/reservas" element={<Bookings />}/> 
+        <Route path="/panel/mis-salas" element={<RoomsList />}/>
       </Routes>
       </Box>
     </Box>
