@@ -450,6 +450,13 @@ export default class Calendario extends React.PureComponent {
         console.log(deleted)
         this.setDeletedAppointmentId(deleted);
         this.toggleConfirmationVisible();
+        fetch('http://localhost:8001/api/bookings/id?id=' + deleted, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(res =>{
+          console.log(res)
+        });
       }
       return { data, addedAppointment: {} };
     });
