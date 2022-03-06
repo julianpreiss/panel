@@ -38,7 +38,7 @@ import Close from '@mui/icons-material/Close';
 import CalendarToday from '@mui/icons-material/CalendarToday';
 import Create from '@mui/icons-material/Create';
 
-import { appointments } from './appointments';
+// import { appointments } from './appointments';
 
 const PREFIX = 'Usala';
 const classes = {
@@ -288,7 +288,7 @@ class AppointmentFormContainerBasic extends React.PureComponent {
 }
 
 /* eslint-disable-next-line react/no-multi-comp */
-export default class Demo extends React.PureComponent {
+export default class Calendario extends React.PureComponent {
 
   componentDidMount(){
     fetch('http://localhost:8001/api/bookings')
@@ -298,11 +298,16 @@ export default class Demo extends React.PureComponent {
     .then((bookings) => {
         this.setState({
             data: bookings.map(function(item){
+              const start = item.start?.dateTime ? item.start.dateTime : item.startDate
+              const end = item.end?.dateTime ? item.end.dateTime : item.endDate
+              const title = item.summary ? item.summary : item.title
+              // const location = item.summary ? item.summary : item.title
               return {
                 id: item._id,
-                startDate: item.start.dateTime,
-                endDate: item.end.dateTime,
-                title: item.summary
+                startDate: start,
+                endDate: end,
+                title: title,
+                // location: location,
               }
             })
         })
@@ -419,12 +424,30 @@ export default class Demo extends React.PureComponent {
       if (added) {
         const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
         data = [...data, { id: startingAddedId, ...added }];
+        fetch('http://localhost:8001/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(added)
+        })
+        .then(res =>{
+          console.log(res)
+        });
       }
       if (changed) {
         data = data.map(appointment => (
           changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+        const elementId = Object.keys(changed)[0]
+          fetch('http://localhost:8001/api/bookings/id?id=' + elementId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(changed[elementId])
+          })
+          .then(res =>{
+            console.log(res)
+          });
       }
       if (deleted !== undefined) {
+        console.log(deleted)
         this.setDeletedAppointmentId(deleted);
         this.toggleConfirmationVisible();
       }
@@ -449,7 +472,7 @@ export default class Demo extends React.PureComponent {
           height={660}
         >
           <ViewState
-            currentDate={currentDate}
+            defaultCurrentDate={currentDate}
           />
           <EditingState
             onCommitChanges={this.commitChanges}
