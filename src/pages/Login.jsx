@@ -18,11 +18,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "./Login.css";
 
-import { Navigate } from 'react-router';
-import { useAuth } from '../context/Auth.Context'
-
 function Login(props) {
-  const { state: AuthState, dispatch: AuthDispatch } = useAuth()
   const [email, setEmail] = useState("");
 
   const [values, setValues] = React.useState({
@@ -71,12 +67,9 @@ function Login(props) {
       })
       .then(function (data) {
         console.log(data);
-        /*if(data.status === "ok"){
-          props.onLogin(data.user, <Navigate to="/panel/reservas" />);
-        }*/
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        AuthDispatch({ type: 'LOGIN', payload: data.user })
+        props.onLogin(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
       })
       .catch(function (err) {
         console.log(err);
@@ -85,12 +78,12 @@ function Login(props) {
 
   return (
     <Card className="login">
-      <Paper className="margin" elevation={10} style={paperStyle}>
+      <Paper className="margin card-login" elevation={10} style={paperStyle}>
         <div className="center">
           <img src={"/logo.png"} alt="logo" />
         </div>
-        <form onSubmit={(e) => onLoginSubmit(e)}>
-          <CardContent>
+        <form onSubmit={(e) => onLoginSubmit(e)} className="form-login">
+          <CardContent className="input-login-form">
             <FormControl sx={{ m: 1, width: "27ch" }} variant="standard">
               <InputLabel htmlFor="standard-adornment-email">
                 Email
@@ -131,7 +124,7 @@ function Login(props) {
               className="btn-usala"
               type="submit"
               variant="contained"
-              size="small"
+              size="medium"
               style={btnstyle}
               fullWidth
               onSubmit={(e) => onLoginSubmit(e)}
