@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import RoomsList from '../components/Room/RoomsList';
 import Bookings from '../components/Bookings/BookingsView';
-import Profile from '../components/Profile/ProfileView';
+import CreateRoom from '../components/Room/CreateRoom';
 import App from'../App';
 
 import Box from '@mui/material/Box';
@@ -21,6 +21,7 @@ import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import ProfileView from '../components/Profile/ProfileView';
 
 const drawerWidth = 240;
 
@@ -49,7 +50,7 @@ export default function ClippedDrawer() {
                 <PersonIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/panel/mi-perfil">Usuario</Link>
+                <Link className="white list none" underline="none" to="/mi-perfil">Usuario</Link>
                 </ListItemText>
             </ListItem>
           </List>
@@ -60,7 +61,7 @@ export default function ClippedDrawer() {
                 <EventAvailableIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/panel/reservas">Reservas</Link>
+                <Link className="white list none" underline="none" to="/reservas">Reservas</Link>
                 </ListItemText>
             </ListItem>
             <ListItem button>
@@ -68,7 +69,7 @@ export default function ClippedDrawer() {
                 <LibraryMusicIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/panel/mis-salas">Mis salas</Link>
+                <Link className="white list none" underline="none" to="/mis-salas">Mis salas</Link>
                 </ListItemText>
             </ListItem>
           </List>
@@ -87,9 +88,12 @@ export default function ClippedDrawer() {
       </Drawer>
       <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Routes>
-        <Route path="/panel/mi-perfil" element={<Profile />}/>  
-        <Route path="/panel/reservas" element={<Bookings />}/> 
-        <Route path="/panel/mis-salas" element={<RoomsList />}/>
+        <Route path="/mi-perfil" element={<ProfileView />}/>  
+        <Route path="/reservas" element={<Bookings />}/>
+        <Route path="/mis-salas" element={<RoomsList />}/>
+        <Route path="/" element={<App />}/>
+        <Route path="*" element={<App />}/>
+        <Route path="/crear-sala" element={<CreateRoom />}/>
       </Routes>
       </Box>
     </Box>
