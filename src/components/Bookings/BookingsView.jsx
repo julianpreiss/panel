@@ -291,7 +291,8 @@ class AppointmentFormContainerBasic extends React.PureComponent {
 export default class Calendario extends React.PureComponent {
 
   componentDidMount(){
-    fetch('http://localhost:8001/api/bookings')
+    const user = JSON.parse(localStorage.getItem('user'))
+    fetch(`http://localhost:8001/api/bookings/confirmed/id?id=${user._id}`)
     .then(function(res){
         return res.json()
     })
@@ -424,6 +425,8 @@ export default class Calendario extends React.PureComponent {
       if (added) {
         const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
         data = [...data, { id: startingAddedId, ...added }];
+        const user = JSON.parse(localStorage.getItem('user'))
+        added.user_id = user._id
         fetch('http://localhost:8001/api/bookings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
