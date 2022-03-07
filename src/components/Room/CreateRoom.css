@@ -1,0 +1,29 @@
+.formulario-crear-sala{
+    width: 100%;
+    height: 100%;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+.formulario-crear-sala input{
+    width: 90%;
+    height: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.formulario-crear-sala input:focus{
+    outline-color: #eaeaea;
+}
+
+.formulario-crear-sala label{
+    font-size: 1.2rem;
+    color: #555;
+    font-weight: 500;
+}
+
