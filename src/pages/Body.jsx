@@ -22,8 +22,16 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import ProfileView from '../components/Profile/ProfileView';
+import {useNavigate} from 'react-router-dom';
 
 const drawerWidth = 240;
+
+
+function Logout() {
+    const navigate = useNavigate();
+    localStorage.removeItem('user');
+    navigate('/');
+}
 
 export default function ClippedDrawer() {
   return (
@@ -80,7 +88,7 @@ export default function ClippedDrawer() {
                 <LogoutIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/">Cerrar sesión</Link>
+                <Link className="white list none" underline="none" to="/" onClick={Logout}>Cerrar sesión</Link>
                 </ListItemText>
             </ListItem>
           </List>
