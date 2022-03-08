@@ -1,6 +1,15 @@
 import React from 'react'
 import {useState , useEffect} from 'react'
 import './ProfileView.css'
+import TextField from '@mui/material/TextField'
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+//import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import CardMedia from '@mui/material/CardMedia';
+import Avatar from '@mui/material/Avatar';
 
 
 function ProfileView(props) {
@@ -68,31 +77,118 @@ function ProfileView(props) {
 
 
     return (
-      <div className="ProfileView">
-        <div className="ProfileView-container">
-            <div className="ProfileView-container-left">
-                <div className="ProfileView-container-left-img">
-                    <h2>Hola {values.name} {values.last_name}!</h2>
-                    <form action="POST" className="formulario-usuario" onSubmit={actualizarDatos}>
-                        <label>Nombre</label>
-                        <input type="text" value={values.name} name="name" onChange={handleInputChange} />
-                        <label>Apellido</label>
-                        <input type="text" value={values.last_name} name="last_name" onChange={handleInputChange} />
-                        <label>Email</label>
-                        <input type="email" value={values.email} name="email" onChange={handleInputChange}/>
-                        <label>Nombre de usuario</label>
-                        <input type="text" value={values.user_name} name="user_name" onChange={handleInputChange}/>
-                        <label>Fecha de nacimiento</label>
-                        <input type="date" value={values.date_birth} name ="date_birth" onChange={handleInputChange}/>
-                        <label>Teléfono</label>
-                        <input type="text" value={values.phone} name="phone" onChange={handleInputChange}/>
-                        <button type="submit" className='btn-usala'>Actualizar Perfil</button>
-                    </form>
-                    
-                </div>
-            </div>
+        <div className="ProfileView">
+            <Grid container spacing={4}>
+                <Grid item xs={4}>
+                    <Card >
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                    <Avatar alt="Remy Sharp" src="https://thumbs.dreamstime.com/b/rock-guitarist-19113213.jpg" className="img-usuario" />
+                                    <Typography variant="h5" component="h3" className='dato-usuario'>
+                                       Hola {values.name} {values.last_name} !
+                                    </Typography>
+                                    <Typography variant="body2" component="p" sx={{my: 2}} className="dato-usuario">
+                                        {values.email}
+                                    </Typography>
+                                </CardContent>
+                            </Grid>
+                        </Grid>
+                    </Card>
+                </Grid>
+                <Grid item xs={8}>
+                    <Card sx={{ minWidth: 275, maxWidth: 900 }}>
+                        <CardMedia
+                            component="img"
+                            height="100"
+                            image="https://cdn.dribbble.com/users/18196/screenshots/1948022/media/5fd82e182893f4acd835ce78ca74101e.jpg?compress=1&resize=800x600&vertical=top
+                            "
+                            alt="User Avatar"
+                        />
+                        <CardContent>
+                        <Typography gutterBottom variant="h4" component="div">
+                            Editar mi perfil
+                        </Typography>
+
+                        <form action="POST" className="formulario-usuario" onSubmit={actualizarDatos}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        id="name"
+                                        label="Nombre"
+                                        name="name"
+                                        value={values.name}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        id="last_name"
+                                        label="Apellido"
+                                        name="last_name"
+                                        value={values.last_name}
+                                        onChange={handleInputChange}
+                                        required
+                                        className='input-usuario'
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        id="email"
+                                        label="Email"
+                                        name="email"
+                                        value={values.email}
+                                        onChange={handleInputChange}
+                                        required
+                                        className='input-usuario'
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        id="user_name"
+                                        label="Nombre de usuario"
+                                        name="user_name"
+                                        value={values.user_name}
+                                        onChange={handleInputChange}
+                                        required
+                                        className='input-usuario'
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        id="date_birth"
+                                        label="Fecha de nacimiento"
+                                        name="date_birth"
+                                        value={values.date_birth}
+                                        onChange={handleInputChange}
+                                        required
+                                        className='input-usuario'
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        id="phone"
+                                        label="Teléfono"
+                                        name="phone"
+                                        value={values.phone}
+                                        onChange={handleInputChange}
+                                        required
+                                        className='input-usuario'
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Button variant="contained" className='btn-panel' type="submit">
+                                        Actualizar
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </form>
+                        </CardContent>
+                        </Card> 
+                    </Grid>
+            </Grid>            
         </div>
-      </div>
     );
 }
 
