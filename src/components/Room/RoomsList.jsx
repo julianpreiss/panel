@@ -4,13 +4,13 @@ import React from 'react'
 import {useState , useEffect} from 'react'
 import RoomCard from './RoomCard'
 import { Link } from 'react-router-dom'
+import Button from '@mui/material/Button';
  
 function RoomsListView(props) {
     
     const [rooms, setRooms] = useState({
         list: [],
         loading: false,
-        filter: '',
     });
 
     useEffect(() => {
@@ -23,7 +23,6 @@ function RoomsListView(props) {
             setRooms({
                 list: rooms,
                 loading: false,
-                filter: '',
             })
         })
     }, [])
@@ -37,7 +36,9 @@ function RoomsListView(props) {
             </div>
             <RoomCard items={rooms.list}/>
             <div>
-                <button className='btn btn-usala'><Link to="/crear-sala">Cargar Sala</Link></button>
+                <Button variant="contained" className='btn-panel' type="submit">
+                    <Link to="/crear-sala" class="btn-panel">Cargar Sala</Link>
+                </Button>
             </div>
         </div>
     )

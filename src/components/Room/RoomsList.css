@@ -81,3 +81,8 @@ form.form-busqueda-sala button {
     cursor: pointer;
     border-radius: 5px;
 }
+
+.btn-panel{
+    color: #fff !important;
+    text-decoration: none !important;
+}
