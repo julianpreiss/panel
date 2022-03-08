@@ -205,7 +205,6 @@ class AppointmentFormContainerBasic extends React.PureComponent {
       <AppointmentForm.Overlay
         visible={visible}
         target={target}
-        fullSize
         onHide={onHide}
       >
         <StyledDiv>
