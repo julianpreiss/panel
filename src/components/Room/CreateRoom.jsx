@@ -2,6 +2,9 @@ import React from "react";
 import { useState } from "react";
 import {useNavigate} from 'react-router-dom';
 import './CreateRoom.css'
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Select from '@material-ui/core/Select';
 
 function CreateRoom(props){
 
@@ -19,7 +22,6 @@ function CreateRoom(props){
             price: "",
             meters: "",
             type: [],
-            services: [],
             opening: "",
             closing: "",
         });
@@ -55,43 +57,47 @@ function CreateRoom(props){
                 <div className="rooms-list-header">
                     <h1>Crear Sala</h1>
                 </div>
-                <form action="POST" onSubmit={crearSala} className="formulario-crear-sala">
-                        <label>Nombre</label>
-                        <input type="text" className="form-control" name="name" onChange={handleInputChange} />
-                        <label>Descripcion de la sala</label>
-                        <input type="text" className="form-control" name="description" onChange={handleInputChange} />
-                        <label>Dirección</label>
-                        <input type="text" className="form-control" name="address" onChange={handleInputChange} />
-                        <label>Bario / Localidad</label>
-                        <input type="text" className="form-control" name="district" onChange={handleInputChange} />
-                        <label>Ciudad</label>
-                        <input type="text" className="form-control" name="city" value="Ciudad Autónoma de Buenos Aires" disabled />
-                        <label>Imagen</label>
-                        <input type="text" className="form-control" name="img" onChange={handleInputChange} />
-                        <label>Precio</label>
-                        <input type="number" className="form-control" name="price" onChange={handleInputChange} />
-                        <label>Metros</label>
-                        <input type="number" className="form-control" name="meters" onChange={handleInputChange} />
-                        <label>Tipo de sala</label>
-                        <select className="form-control" name="type" onChange={handleInputChange}>
-                            <option value="">Seleccione un tipo de sala</option>
-                            <option value="Estudio de Grabación">Estudio de grabación</option>
-                            <option value="Sala de Ensayo">Sala de ensayo</option>
-                        </select>
-                        <label>Servicios</label>
-                        <select className="form-control" name="services" onChange={handleInputChange}>
-                            <option value="">Seleccione un servicio</option>
-                            <option value="Wifi">Wifi</option>
-                            <option value="Aire Acondicionado">Aire acondicionado</option>
-                            <option value="Alquiler de instrumentos">Alquiler de instrumentos</option>
-                            <option value="Adaptadores para instrumentos">Adaptadores para insturmentos</option>
-                        </select>
-                        <label>Horario de apertura</label>
-                        <input type="time" className="form-control" name="opening" onChange={handleInputChange} />
-                        <label>Horario de cierre</label>
-                        <input type="time" className="form-control" name="closing" onChange={handleInputChange} />
-                    <button type="submit" className="btn btn-usala">Crear Sala</button>
-                </form>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <form action="POST" onSubmit={crearSala} className="formulario-crear-sala">
+                                <label>Nombre</label>
+                                <input type="text" className="form-control" name="name" onChange={handleInputChange} />
+                                <label>Descripcion de la sala</label>
+                                <input type="text" className="form-control" name="description" onChange={handleInputChange} />
+                                <label>Dirección</label>
+                                <input type="text" className="form-control" name="address" onChange={handleInputChange} />
+                                <label>Bario / Localidad</label>
+                                <input type="text" className="form-control" name="district" onChange={handleInputChange} />
+                                <label>Ciudad</label>
+                                <input type="text" className="form-control" name="city" value="Ciudad Autónoma de Buenos Aires" disabled />
+                                <label>Imagen</label>
+                                <input type="text" className="form-control" name="img" onChange={handleInputChange} />
+                                <label>Precio</label>
+                                <input type="number" className="form-control" name="price" onChange={handleInputChange} />
+                                <label>Metros</label>
+                                <input type="number" className="form-control" name="meters" onChange={handleInputChange} />
+                                <label>Tipo de sala</label>
+                                <Select 
+                                    native
+                                    name="type"
+                                    onChange={handleInputChange}
+                                    inputProps={{
+                                        name: 'type',
+                                        id: 'type',
+                                    }}
+                                >
+                                    <option value="" />
+                                    <option value="Estudio de grabación">Estudio de grabación</option>
+                                    <option value="Sala de ensayo">Sala de ensayo</option>
+                                </Select>
+                                <label>Horario de apertura</label>
+                                <input type="time" className="form-control" name="opening" onChange={handleInputChange} />
+                                <label>Horario de cierre</label>
+                                <input type="time" className="form-control" name="closing" onChange={handleInputChange} />
+                            <Button variant="contained" className='btn-panel-crear' type='submit'>Crear sala</Button>
+                        </form>
+                    </Grid>
+                </Grid>
             </div>
         )
 
