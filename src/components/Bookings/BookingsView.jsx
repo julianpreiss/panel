@@ -321,7 +321,7 @@ export default class Calendario extends React.PureComponent {
 
     this.state = {
       data: [],
-      currentDate: '2021-12-15',
+      currentDate: '2022-3-15',
       confirmationVisible: false,
       editingFormVisible: false,
       deletedAppointmentId: undefined,
