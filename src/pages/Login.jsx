@@ -16,12 +16,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {useNavigate} from 'react-router-dom';
 import "./Login.css";
 
 function Login(props) {
   const [email, setEmail] = useState("");
 
-  const [values, setValues] = React.useState({
+  const [values, setValues] = useState({
     password: "",
     showPassword: false,
   });
@@ -41,6 +42,8 @@ function Login(props) {
     event.preventDefault();
   };
 
+  const navigate = useNavigate();
+
   const paperStyle = {
     padding: 20,
     height: "70vh",
@@ -51,7 +54,6 @@ function Login(props) {
 
   function onLoginSubmit(event) {
     event.preventDefault();
-
     fetch("http://localhost:8001/api/login", {
       method: "POST",
       headers: {
@@ -62,18 +64,17 @@ function Login(props) {
         password: values.password,
       }),
     })
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (data) {
-        console.log(data);
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.user) {
         props.onLogin(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('token', data.token);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+      } else {
+        alert("Usuario o contraseña incorrectos");
+        navigate('/')
+      }
+    });
   }
 
   return (
