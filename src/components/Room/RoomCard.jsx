@@ -17,7 +17,7 @@ function RoomCard(props){
                         component="img"
                         alt={room.name}
                         height="140"
-                        image={room.img}
+                        image={"http://localhost:8001/api/img/" + room.img}
                         className="img-card"
                     />
                     <CardContent>
