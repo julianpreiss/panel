@@ -2,7 +2,6 @@ import {useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Body from './pages/Body';
 import Login from './pages/Login';
-import Bookings from './components/Bookings/BookingsView';
 
 function AuthDiv(props) {
   return props.isAuth ? props.children : null;
