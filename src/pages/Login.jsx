@@ -54,7 +54,7 @@ function Login(props) {
 
   function onLoginSubmit(event) {
     event.preventDefault();
-    fetch("http://localhost:8001/api/login", {
+    fetch("https://usala-api.herokuapp.com/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

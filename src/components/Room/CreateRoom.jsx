@@ -37,7 +37,7 @@ function CreateRoom(props){
     
         const crearSala = (event) => {
             event.preventDefault()
-            fetch('http://localhost:8001/api/rooms', {
+            fetch('https://usala-api.herokuapp.com/api/rooms', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

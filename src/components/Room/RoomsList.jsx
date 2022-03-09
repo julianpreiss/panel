@@ -15,7 +15,7 @@ function RoomsListView(props) {
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'))
-        fetch('http://localhost:8001/api/rooms/user_id?user_id=' + user._id)
+        fetch('https://usala-api.herokuapp.com/api/rooms/user_id?user_id=' + user._id)
         .then(function(res){
             return res.json()
         })

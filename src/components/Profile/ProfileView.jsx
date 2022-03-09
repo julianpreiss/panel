@@ -28,7 +28,7 @@ function ProfileView(props) {
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'))
         console.log(user + 'con ID: ' + user._id) 
-        fetch('http://localhost:8001/api/users/id?id=' + user._id)
+        fetch('https://usala-api.herokuapp.com/api/users/id?id=' + user._id)
         .then(function(res){
             return res.json()
         })
@@ -58,7 +58,7 @@ function ProfileView(props) {
     const actualizarDatos = (event) => {
         const user = JSON.parse(localStorage.getItem('user'))
         event.preventDefault()
-        fetch('http://localhost:8001/api/users/id?id=' + user._id , {
+        fetch('https://usala-api.herokuapp.com/api/users/id?id=' + user._id , {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',

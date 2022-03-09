@@ -291,7 +291,7 @@ export default class Calendario extends React.PureComponent {
 
   componentDidMount(){
     const user = JSON.parse(localStorage.getItem('user'))
-    fetch(`http://localhost:8001/api/bookings/confirmed?user_id=${user._id}`)
+    fetch(`https://usala-api.herokuapp.com/api/bookings/confirmed?user_id=${user._id}`)
     .then(function(res){
         return res.json()
     })
@@ -426,7 +426,7 @@ export default class Calendario extends React.PureComponent {
         data = [...data, { id: startingAddedId, ...added }];
         const user = JSON.parse(localStorage.getItem('user'))
         added.user_id = user._id
-        fetch('http://localhost:8001/api/bookings', {
+        fetch('https://usala-api.herokuapp.com/api/bookings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(added)
@@ -439,7 +439,7 @@ export default class Calendario extends React.PureComponent {
         data = data.map(appointment => (
           changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
         const elementId = Object.keys(changed)[0]
-          fetch('http://localhost:8001/api/bookings/id?id=' + elementId, {
+          fetch('https://usala-api.herokuapp.com/api/bookings/id?id=' + elementId, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(changed[elementId])
@@ -452,7 +452,7 @@ export default class Calendario extends React.PureComponent {
         console.log(deleted)
         this.setDeletedAppointmentId(deleted);
         this.toggleConfirmationVisible();
-        fetch('http://localhost:8001/api/bookings/id?id=' + deleted, {
+        fetch('https://usala-api.herokuapp.com/api/bookings/id?id=' + deleted, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
         })
