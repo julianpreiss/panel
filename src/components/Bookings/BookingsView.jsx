@@ -1,152 +1,554 @@
+/* eslint-disable max-classes-per-file */
+/* eslint-disable react/no-unused-state */
 import * as React from 'react';
-import Paper from '@material-ui/core/Paper';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { withStyles } from '@material-ui/core/styles';
-import {
-  ViewState,
-} from '@devexpress/dx-react-scheduler';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import { ViewState, EditingState } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
-  WeekView,
-  DayView,
-  Appointments,
   Toolbar,
+  MonthView,
+  WeekView,
   DateNavigator,
   ViewSwitcher,
-  AppointmentForm,
+  Appointments,
   AppointmentTooltip,
-  TodayButton,
+  AppointmentForm,
+  DragDropProvider,
+  EditRecurrenceMenu,
+  AllDayPanel,
 } from '@devexpress/dx-react-scheduler-material-ui';
+import { connectProps } from '@devexpress/dx-react-core';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterMoment from '@mui/lab/AdapterMoment';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import TextField from '@mui/material/TextField';
+import LocationOn from '@mui/icons-material/LocationOn';
+import Notes from '@mui/icons-material/Notes';
+import Close from '@mui/icons-material/Close';
+import CalendarToday from '@mui/icons-material/CalendarToday';
+import Create from '@mui/icons-material/Create';
 
+// import { appointments } from './appointments';
 
-const getData = (setData, setLoading) => {
-  const dataUrl = 'http://localhost:8001/api/bookings';
-  setLoading(true);
-
-  return fetch(dataUrl)
-    .then(response => response.json())
-    .then((data) => {
-      setTimeout(() => {
-        setData(data);
-        setLoading(false);
-      }, 600);
-    });
+const PREFIX = 'Usala';
+const classes = {
+  content: `${PREFIX}-content`,
+  header: `${PREFIX}-header`,
+  closeButton: `${PREFIX}-closeButton`,
+  buttonGroup: `${PREFIX}-buttonGroup`,
+  button: `${PREFIX}-button`,
+  picker: `${PREFIX}-picker`,
+  wrapper: `${PREFIX}-wrapper`,
+  icon: `${PREFIX}-icon`,
+  textField: `${PREFIX}-textField`,
+  addButton: `${PREFIX}-addButton`,
 };
 
-const styles = {
-  toolbarRoot: {
-    position: 'relative',
+const StyledDiv = styled('div')(({ theme }) => ({
+  [`& .${classes.icon}`]: {
+    margin: theme.spacing(2, 0),
+    marginRight: theme.spacing(2),
   },
-  progress: {
-    position: 'absolute',
+  [`& .${classes.header}`]: {
+    overflow: 'hidden',
+    paddingTop: theme.spacing(0.5),
+  },
+  [`& .${classes.textField}`]: {
     width: '100%',
-    bottom: 0,
-    left: 0,
   },
-};
+  [`& .${classes.content}`]: {
+    padding: theme.spacing(2),
+    paddingTop: 0,
+  },
+  [`& .${classes.closeButton}`]: {
+    float: 'right',
+  },
+  [`& .${classes.picker}`]: {
+    marginRight: theme.spacing(2),
+    '&:last-child': {
+      marginRight: 0,
+    },
+    width: '50%',
+  },
+  [`& .${classes.wrapper}`]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: theme.spacing(1, 0),
+  },
+  [`& .${classes.buttonGroup}`]: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 2),
+  },
+  [`& .${classes.button}`]: {
+    marginLeft: theme.spacing(2),
+  },
+}));
+const StyledFab = styled(Fab)(({ theme }) => ({
+  [`&.${classes.addButton}`]: {
+    position: 'absolute',
+    bottom: theme.spacing(3),
+    right: theme.spacing(4),
+  },
+}));
+class AppointmentFormContainerBasic extends React.PureComponent {
+  constructor(props) {
+    super(props);
 
-const ToolbarWithLoading = withStyles(styles, { name: 'Toolbar' })(
-  ({ children, classes, ...restProps }) => (
-    <div className={classes.toolbarRoot}>
-      <Toolbar.Root {...restProps}>
-        {children}
-      </Toolbar.Root>
-      <LinearProgress className={classes.progress} />
-    </div>
-  ),
-);
+    this.state = {
+      appointmentChanges: {},
+    };
 
-const argTime = date => new Date(date).toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' });
+    this.getAppointmentData = () => {
+      const { appointmentData } = this.props;
+      return appointmentData;
+    };
+    this.getAppointmentChanges = () => {
+      const { appointmentChanges } = this.state;
+      return appointmentChanges;
+    };
 
-const mapAppointmentData = appointment => ({
-  id: appointment.id,
-  startDate: argTime(appointment.start.dateTime),
-  endDate: argTime(appointment.end.dateTime),
-  title: appointment.summary,
-});
-
-const initialState = {
-  data: [],
-  loading: false,
-  currentDate: '2021-12-05',
-  currentViewName: 'Week',
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'setLoading':
-      return { ...state, loading: action.payload };
-    case 'setData':
-      return { ...state, data: action.payload.map(mapAppointmentData) };
-    case 'setCurrentViewName':
-      return { ...state, currentViewName: action.payload };
-    case 'setCurrentDate':
-      return { ...state, currentDate: action.payload };
-    default:
-      return state;
+    this.changeAppointment = this.changeAppointment.bind(this);
+    this.commitAppointment = this.commitAppointment.bind(this);
   }
-};
 
-function BookingsView () {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  const {
-    data, loading, currentViewName, currentDate,
-  } = state;
-  const setCurrentViewName = React.useCallback(nextViewName => dispatch({
-    type: 'setCurrentViewName', payload: nextViewName,
-  }), [dispatch]);
-  const setData = React.useCallback(nextData => dispatch({
-    type: 'setData', payload: nextData,
-  }), [dispatch]);
-  const setCurrentDate = React.useCallback(nextDate => dispatch({
-    type: 'setCurrentDate', payload: nextDate,
-  }), [dispatch]);
-  const setLoading = React.useCallback(nextLoading => dispatch({
-    type: 'setLoading', payload: nextLoading,
-  }), [dispatch]);
+  changeAppointment({ field, changes }) {
+    const nextChanges = {
+      ...this.getAppointmentChanges(),
+      [field]: changes,
+    };
+    this.setState({
+      appointmentChanges: nextChanges,
+    });
+  }
 
-  React.useEffect(() => {
-    getData(setData, setLoading);
-  }, [setData, currentViewName, currentDate, setLoading]);
+  commitAppointment(type) {
+    const { commitChanges } = this.props;
+    const appointment = {
+      ...this.getAppointmentData(),
+      ...this.getAppointmentChanges(),
+    };
+    if (type === 'deleted') {
+      commitChanges({ [type]: appointment.id });
+    } else if (type === 'changed') {
+      commitChanges({ [type]: { [appointment.id]: appointment } });
+    } else {
+      commitChanges({ [type]: appointment });
+    }
+    this.setState({
+      appointmentChanges: {},
+    });
+  }
 
-  return (
-    <Paper
-    style= {{marginTop: '65px'}}
-    className="BookingsView"
-    >
-      <Scheduler
-        data={data}
-        height={660}
+  render() {
+    const {
+      visible,
+      visibleChange,
+      appointmentData,
+      cancelAppointment,
+      target,
+      onHide,
+    } = this.props;
+    const { appointmentChanges } = this.state;
+
+    const displayAppointmentData = {
+      ...appointmentData,
+      ...appointmentChanges,
+    };
+
+    const isNewAppointment = appointmentData.id === undefined;
+    const applyChanges = isNewAppointment
+      ? () => this.commitAppointment('added')
+      : () => this.commitAppointment('changed');
+
+    const textEditorProps = field => ({
+      variant: 'outlined',
+      onChange: ({ target: change }) => this.changeAppointment({
+        field: [field], changes: change.value,
+      }),
+      value: displayAppointmentData[field] || '',
+      label: field[0].toUpperCase() + field.slice(1),
+      className: classes.textField,
+    });
+
+    const pickerEditorProps = field => ({
+      // keyboard: true,
+      value: displayAppointmentData[field],
+      onChange: date => this.changeAppointment({
+        field: [field], changes: date ? date.toDate() : new Date(displayAppointmentData[field]),
+      }),
+      ampm: false,
+      inputFormat: 'DD/MM/YYYY HH:mm',
+      onError: () => null,
+    });
+    const startDatePickerProps = pickerEditorProps('startDate');
+    const endDatePickerProps = pickerEditorProps('endDate');
+    const cancelChanges = () => {
+      this.setState({
+        appointmentChanges: {},
+      });
+      visibleChange();
+      cancelAppointment();
+    };
+
+    return (
+      <AppointmentForm.Overlay
+        visible={visible}
+        target={target}
+        onHide={onHide}
       >
-        <ViewState
-          currentDate={currentDate}
-          currentViewName={currentViewName}
-          onCurrentViewNameChange={setCurrentViewName}
-          onCurrentDateChange={setCurrentDate}
-        />
-        <DayView
-          startDayHour={8}
-          endDayHour={24}
-        />
-        <WeekView
-          startDayHour={8}
-          endDayHour={24}
-        />
-        <Appointments />
-        <Toolbar
-          {...loading ? { rootComponent: ToolbarWithLoading } : null}
-        />
-        <DateNavigator />
-        <TodayButton />
-        <ViewSwitcher />
-        <AppointmentTooltip
-          showOpenButton
-          showCloseButton
-        />
-        <AppointmentForm readOnly />
-      </Scheduler>
-    </Paper>
-  );
-};
+        <StyledDiv>
+          <div className={classes.header}>
+            <IconButton className={classes.closeButton} onClick={cancelChanges} size="large">
+              <Close color="action" />
+            </IconButton>
+          </div>
+          <div className={classes.content}>
+            <div className={classes.wrapper}>
+              <Create className={classes.icon} color="action" />
+              <TextField
+                {...textEditorProps('title')}
+              />
+            </div>
+            <div className={classes.wrapper}>
+              <CalendarToday className={classes.icon} color="action" />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DateTimePicker
+                  label="Start Date"
+                  renderInput={
+                    props => <TextField className={classes.picker} {...props} />
+                  }
+                  {...startDatePickerProps}
+                />
+                <DateTimePicker
+                  label="End Date"
+                  renderInput={
+                    props => <TextField className={classes.picker} {...props} />
+                  }
+                  {...endDatePickerProps}
+                />
+              </LocalizationProvider>
+            </div>
+            <div className={classes.wrapper}>
+              <LocationOn className={classes.icon} color="action" />
+              <TextField
+                {...textEditorProps('location')}
+              />
+            </div>
+            <div className={classes.wrapper}>
+              <Notes className={classes.icon} color="action" />
+              <TextField
+                {...textEditorProps('notes')}
+                multiline
+                rows="6"
+              />
+            </div>
+          </div>
+          <div className={classes.buttonGroup}>
+            {!isNewAppointment && (
+              <Button
+                variant="outlined"
+                color="secondary"
+                className={classes.button}
+                onClick={() => {
+                  visibleChange();
+                  this.commitAppointment('deleted');
+                }}
+              >
+                Delete
+              </Button>
+            )}
+            <Button
+              variant="outlined"
+              color="primary"
+              className={classes.button}
+              onClick={() => {
+                visibleChange();
+                applyChanges();
+              }}
+            >
+              {isNewAppointment ? 'Create' : 'Save'}
+            </Button>
+          </div>
+        </StyledDiv>
+      </AppointmentForm.Overlay>
+    );
+  }
+}
 
-export default BookingsView
+/* eslint-disable-next-line react/no-multi-comp */
+export default class Calendario extends React.PureComponent {
+
+  componentDidMount(){
+    const user = JSON.parse(localStorage.getItem('user'))
+    fetch(`http://localhost:8001/api/bookings/confirmed?user_id=${user._id}`)
+    .then(function(res){
+        return res.json()
+    })
+    .then((bookings) => {
+        this.setState({
+            data: bookings.map(function(item){
+              const start = item.start?.dateTime ? item.start.dateTime : item.startDate
+              const end = item.end?.dateTime ? item.end.dateTime : item.endDate
+              const title = item.summary ? item.summary : item.title
+              // const location = item.summary ? item.summary : item.title
+              return {
+                id: item._id,
+                startDate: start,
+                endDate: end,
+                title: title,
+                // location: location,
+              }
+            })
+        })
+    })
+}
+
+  constructor(props) {
+    super(props);
+
+
+    this.state = {
+      data: [],
+      currentDate: '2022-3-15',
+      confirmationVisible: false,
+      editingFormVisible: false,
+      deletedAppointmentId: undefined,
+      editingAppointment: undefined,
+      previousAppointment: undefined,
+      addedAppointment: {},
+      startDayHour: 7,
+      endDayHour: 24,
+      isNewAppointment: false,
+    };
+
+    this.toggleConfirmationVisible = this.toggleConfirmationVisible.bind(this);
+    this.commitDeletedAppointment = this.commitDeletedAppointment.bind(this);
+    this.toggleEditingFormVisibility = this.toggleEditingFormVisibility.bind(this);
+
+    this.commitChanges = this.commitChanges.bind(this);
+    this.onEditingAppointmentChange = this.onEditingAppointmentChange.bind(this);
+    this.onAddedAppointmentChange = this.onAddedAppointmentChange.bind(this);
+    this.appointmentForm = connectProps(AppointmentFormContainerBasic, () => {
+      const {
+        editingFormVisible,
+        editingAppointment,
+        data,
+        addedAppointment,
+        isNewAppointment,
+        previousAppointment,
+      } = this.state;
+
+      const currentAppointment = 
+      data
+        .filter(appointment => editingAppointment && appointment.id === editingAppointment.id)[0]
+        || addedAppointment;
+      const cancelAppointment = () => {
+        if (isNewAppointment) {
+          this.setState({
+            editingAppointment: previousAppointment,
+            isNewAppointment: false,
+          });
+        }
+      };
+
+      return {
+        visible: editingFormVisible,
+        appointmentData: currentAppointment,
+        commitChanges: this.commitChanges,
+        visibleChange: this.toggleEditingFormVisibility,
+        onEditingAppointmentChange: this.onEditingAppointmentChange,
+        cancelAppointment,
+      };
+    });
+  }
+
+  componentDidUpdate() {
+    this.appointmentForm.update();
+  }
+
+  onEditingAppointmentChange(editingAppointment) {
+    this.setState({ editingAppointment });
+  }
+
+  onAddedAppointmentChange(addedAppointment) {
+    this.setState({ addedAppointment });
+    const { editingAppointment } = this.state;
+    if (editingAppointment !== undefined) {
+      this.setState({
+        previousAppointment: editingAppointment,
+      });
+    }
+    this.setState({ editingAppointment: undefined, isNewAppointment: true });
+  }
+
+  setDeletedAppointmentId(id) {
+    this.setState({ deletedAppointmentId: id });
+  }
+
+  toggleEditingFormVisibility() {
+    const { editingFormVisible } = this.state;
+    this.setState({
+      editingFormVisible: !editingFormVisible,
+    });
+  }
+
+  toggleConfirmationVisible() {
+    const { confirmationVisible } = this.state;
+    this.setState({ confirmationVisible: !confirmationVisible });
+  }
+
+  commitDeletedAppointment() {
+    this.setState((state) => {
+      const { data, deletedAppointmentId } = state;
+      const nextData = data.filter(appointment => appointment.id !== deletedAppointmentId);
+
+      return { data: nextData, deletedAppointmentId: null };
+    });
+    this.toggleConfirmationVisible();
+  }
+
+  commitChanges({ added, changed, deleted }) {
+    this.setState((state) => {
+      let { data } = state;
+      if (added) {
+        const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
+        data = [...data, { id: startingAddedId, ...added }];
+        const user = JSON.parse(localStorage.getItem('user'))
+        added.user_id = user._id
+        fetch('http://localhost:8001/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(added)
+        })
+        .then(res =>{
+          console.log(res)
+        });
+      }
+      if (changed) {
+        data = data.map(appointment => (
+          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+        const elementId = Object.keys(changed)[0]
+          fetch('http://localhost:8001/api/bookings/id?id=' + elementId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(changed[elementId])
+          })
+          .then(res =>{
+            console.log(res)
+          });
+      }
+      if (deleted !== undefined) {
+        console.log(deleted)
+        this.setDeletedAppointmentId(deleted);
+        this.toggleConfirmationVisible();
+        fetch('http://localhost:8001/api/bookings/id?id=' + deleted, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(res =>{
+          console.log(res)
+        });
+      }
+      return { data, addedAppointment: {} };
+    });
+  }
+
+  render() {
+    const {
+      currentDate,
+      data,
+      confirmationVisible,
+      editingFormVisible,
+      startDayHour,
+      endDayHour,
+    } = this.state;
+
+    return (
+      <Paper>
+        <Scheduler
+          data={data}
+          height={660}
+        >
+          <ViewState
+            defaultCurrentDate={currentDate}
+          />
+          <EditingState
+            onCommitChanges={this.commitChanges}
+            onEditingAppointmentChange={this.onEditingAppointmentChange}
+            onAddedAppointmentChange={this.onAddedAppointmentChange}
+          />
+          <WeekView
+            startDayHour={startDayHour}
+            endDayHour={endDayHour}
+          />
+          <MonthView />
+          <AllDayPanel />
+          <EditRecurrenceMenu />
+          <Appointments />
+          <AppointmentTooltip
+            showOpenButton
+            showCloseButton
+            showDeleteButton
+          />
+          <Toolbar />
+          <DateNavigator />
+          <ViewSwitcher />
+          <AppointmentForm
+            overlayComponent={this.appointmentForm}
+            visible={editingFormVisible}
+            onVisibilityChange={this.toggleEditingFormVisibility}
+          />
+          <DragDropProvider />
+        </Scheduler>
+
+        <Dialog
+          open={confirmationVisible}
+          onClose={this.cancelDelete}
+        >
+          <DialogTitle>
+            Eliminar Reserva
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Estás seguro que deseas eliminar esta reserva?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.toggleConfirmationVisible} color="primary" variant="outlined">
+              Cancelar
+            </Button>
+            <Button onClick={this.commitDeletedAppointment} color="secondary" variant="outlined">
+              Borrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <StyledFab
+          color="secondary"
+          className={classes.addButton}
+          onClick={() => {
+            this.setState({ editingFormVisible: true });
+            this.onEditingAppointmentChange(undefined);
+            this.onAddedAppointmentChange({
+              startDate: new Date(currentDate).setHours(startDayHour),
+              endDate: new Date(currentDate).setHours(startDayHour + 1),
+            });
+          }}
+        >
+          <AddIcon />
+        </StyledFab>
+      </Paper>
+    );
+  }
+}

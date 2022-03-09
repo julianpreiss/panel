@@ -1,12 +1,88 @@
 .RoomsListView{
-    background-color: aqua;
-}
-/* Comentario de prueba */
-/* Comentario de prueba 2 */
-.RoomsListView>h1{
-    color:blue;
+    background-color: #fafafa;
 }
 
-/*Otro comentario de prueba*/
-/*Comentario en rama tamara*/
-/* Este es otro comentario de prueba*/
+.RoomsListView>h1{
+    margin: 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.listado-salas{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: grid;
+    justify-content: space-around;
+    align-items: center;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.listado{
+    list-style: none;
+    display: inline-block;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 50px;
+}
+
+.cards{
+    display: inline-block;
+    margin: 8px;
+    perspective: 1000;
+    position: relative;
+    text-align: left;
+    transition: all 0.3s 0s ease-in;
+    max-width: 500px;
+    min-height: 350px;
+    z-index: 1;
+}
+
+.img-card{
+    object-fit: cover;
+}
+
+.div-busqueda-sala{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.form-busqueda-sala{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+form.form-busqueda-sala input {
+    padding: 10px 30px;
+    width: 25%;
+    border: none;
+    border-bottom: 2px solid #051A26;
+}
+
+form.form-busqueda-sala button {
+    background: #EA1F54;
+    padding: 10px 30px;
+    border: none;
+    margin-left: 10px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-panel{
+    color: #fff !important;
+    text-decoration: none !important;
+}

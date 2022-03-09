@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import RoomsList from '../components/Room/RoomsList';
 import Bookings from '../components/Bookings/BookingsView';
-import Profile from '../components/Profile/ProfileView';
+import CreateRoom from '../components/Room/CreateRoom';
 import App from'../App';
 
 import Box from '@mui/material/Box';
@@ -21,8 +21,17 @@ import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import ProfileView from '../components/Profile/ProfileView';
+import {useNavigate} from 'react-router-dom';
 
 const drawerWidth = 240;
+
+
+function Logout() {
+    const navigate = useNavigate();
+    localStorage.removeItem('user');
+    navigate('/');
+}
 
 export default function ClippedDrawer() {
   return (
@@ -79,7 +88,7 @@ export default function ClippedDrawer() {
                 <LogoutIcon fontSize="medium" />
               </ListItemIcon>
               <ListItemText>
-                <Link className="white list none" underline="none" to="/">Cerrar sesión</Link>
+                <Link className="white list none" underline="none" to="/" onClick={Logout}>Cerrar sesión</Link>
                 </ListItemText>
             </ListItem>
           </List>
@@ -87,10 +96,12 @@ export default function ClippedDrawer() {
       </Drawer>
       <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Routes>
-        <Route path="/mi-perfil" element={<Profile />}/>  
+        <Route path="/mi-perfil" element={<ProfileView />}/>  
         <Route path="/reservas" element={<Bookings />}/>
         <Route path="/mis-salas" element={<RoomsList />}/>
         <Route path="/" element={<App />}/>
+        <Route path="*" element={<App />}/>
+        <Route path="/crear-sala" element={<CreateRoom />}/>
       </Routes>
       </Box>
     </Box>

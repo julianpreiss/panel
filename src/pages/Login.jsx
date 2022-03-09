@@ -16,12 +16,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {useNavigate} from 'react-router-dom';
 import "./Login.css";
 
 function Login(props) {
   const [email, setEmail] = useState("");
 
-  const [values, setValues] = React.useState({
+  const [values, setValues] = useState({
     password: "",
     showPassword: false,
   });
@@ -41,6 +42,8 @@ function Login(props) {
     event.preventDefault();
   };
 
+  const navigate = useNavigate();
+
   const paperStyle = {
     padding: 20,
     height: "70vh",
@@ -51,7 +54,6 @@ function Login(props) {
 
   function onLoginSubmit(event) {
     event.preventDefault();
-
     fetch("http://localhost:8001/api/login", {
       method: "POST",
       headers: {
@@ -62,26 +64,27 @@ function Login(props) {
         password: values.password,
       }),
     })
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (data) {
-        console.log(data);
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.user) {
         props.onLogin(data.user);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+      } else {
+        alert("Usuario o contraseña incorrectos");
+        navigate('/')
+      }
+    });
   }
 
   return (
     <Card className="login">
-      <Paper className="margin" elevation={10} style={paperStyle}>
+      <Paper className="margin card-login" elevation={10} style={paperStyle}>
         <div className="center">
           <img src={"/logo.png"} alt="logo" />
         </div>
-        <form onSubmit={(e) => onLoginSubmit(e)}>
-          <CardContent>
+        <form onSubmit={(e) => onLoginSubmit(e)} className="form-login">
+          <CardContent className="input-login-form">
             <FormControl sx={{ m: 1, width: "27ch" }} variant="standard">
               <InputLabel htmlFor="standard-adornment-email">
                 Email
@@ -122,7 +125,7 @@ function Login(props) {
               className="btn-usala"
               type="submit"
               variant="contained"
-              size="small"
+              size="medium"
               style={btnstyle}
               fullWidth
               onSubmit={(e) => onLoginSubmit(e)}
